@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Page</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Profile Section -->
+  <section id="profile" class="section hidden-section px-4 pt-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <button class="text-gray-500 hover:text-gray-700">
+        <!-- Back Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+      <h1 class="text-xl font-semibold text-gray-800">Profile</h1>
+      <button class="text-gray-500 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Profile Picture -->
+    <div class="flex flex-col items-center mb-6 relative">
+      <img
+        src="https://via.placeholder.com/100"
+        alt="Profile"
+        class="w-24 h-24 rounded-full border-4 border-white shadow-md"
+      />
+      <button class="absolute bottom-0 bg-blue-500 p-2 rounded-full border-2 border-white shadow hover:bg-blue-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-1.5a2.5 2.5 0 113.536 3.536L7.5 21H3v-4.5l13.732-13.732z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Profile Info List -->
+    <div class="space-y-4">
+      <!-- Display Name -->
+      <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A7 7 0 0112 15a7 7 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span class="text-sm text-gray-600">Display Name</span>
+        </div>
+        <span class="text-sm font-medium text-gray-800">Andrew Ainsley</span>
+      </div>
+
+      <!-- Email -->
+      <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+          </svg>
+          <span class="text-sm text-gray-600">Email</span>
+        </div>
+        <span class="text-sm font-medium text-gray-800">andrew@company.com</span>
+      </div>
+
+      <!-- Phone -->
+      <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.5a2.25 2.25 0 00-2.25-2.25h-1.5a2.25 2.25 0 00-2.25 2.25v.75a.75.75 0 01-.75.75 12.726 12.726 0 01-12.75-12.75.75.75 0 01.75-.75h.75a2.25 2.25 0 002.25-2.25v-1.5a2.25 2.25 0 00-2.25-2.25H4.5A2.25 2.25 0 002.25 6.75z" />
+          </svg>
+          <span class="text-sm text-gray-600">Phone</span>
+        </div>
+        <span class="text-sm font-medium text-gray-800">+1 111 467 378 399</span>
+      </div>
+
+      <!-- Location -->
+      <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21.75c3.728 0 6.75-3.022 6.75-6.75S15.728 8.25 12 8.25 5.25 11.272 5.25 15s3.022 6.75 6.75 6.75z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
+          </svg>
+          <span class="text-sm text-gray-600">Location</span>
+        </div>
+        <span class="text-sm font-medium text-gray-800">United States</span>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-8 space-y-3">
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium shadow hover:scale-105 transition">
+        Logout
+      </button>
+      <button class="w-full py-3 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 font-medium shadow hover:scale-105 transition">
+        Change Account
+      </button>
+    </div>
+  </section>
+
+</body>
+</html>

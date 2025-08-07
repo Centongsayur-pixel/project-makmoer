@@ -1,4 +1,4 @@
-// Handle Bottom Navigation Clicks
+// === Bottom Navigation ===
 const navItems = document.querySelectorAll(".nav-item");
 const sections = document.querySelectorAll(".section");
 
@@ -6,7 +6,7 @@ navItems.forEach((item) => {
   item.addEventListener("click", (e) => {
     e.preventDefault();
 
-    // Reset semua nav-item
+    // Reset nav
     navItems.forEach((i) => {
       i.classList.remove("primary");
       i.classList.add("text-gray-500");
@@ -14,7 +14,7 @@ navItems.forEach((item) => {
       if (indicator) indicator.remove();
     });
 
-    // Set nav-item aktif
+    // Aktifkan yang diklik
     item.classList.remove("text-gray-500");
     item.classList.add("primary");
     const dot = document.createElement("span");
@@ -22,7 +22,7 @@ navItems.forEach((item) => {
       "indicator absolute -bottom-1 w-1 h-1 rounded-full bg-[#1A2A80]";
     item.appendChild(dot);
 
-    // Sembunyikan semua section dan tampilkan target
+    // Tampilkan section target
     sections.forEach((section) => {
       section.classList.add("hidden-section");
       section.classList.remove("active-section");
@@ -36,7 +36,7 @@ navItems.forEach((item) => {
   });
 });
 
-// Sales Chart (Multi-Line)
+// === SALES CHART ===
 const ctx = document.getElementById("salesChart");
 const salesChart = new Chart(ctx, {
   type: "line",
@@ -68,26 +68,21 @@ const salesChart = new Chart(ctx, {
   },
 });
 
-// Add Sales Data (Form)
 document.getElementById("sales-form").addEventListener("submit", function (e) {
   e.preventDefault();
   const date = document.getElementById("sales-date").value;
   const amount = parseInt(document.getElementById("sales-amount").value);
-
   if (!date || isNaN(amount)) return;
-
-  // Update chart dengan data baru
   salesChart.data.labels.push(date);
   salesChart.data.datasets[0].data.push(amount);
   salesChart.update();
-
   this.reset();
 });
 
+// === GANTI FOTO PROFIL ===
 changePhotoBtn.addEventListener("click", () => {
   photoInput.click();
 });
-
 photoInput.addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -98,3 +93,7 @@ photoInput.addEventListener("change", (e) => {
     reader.readAsDataURL(file);
   }
 });
+
+// === ITEM HANDLER ===
+
+// Ambil elemen yang dibutuhkan

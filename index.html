@@ -122,10 +122,22 @@
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-2xl font-semibold text-gray-800">Items</h1>
           <button
-            id="add-item-btn"
             class="bg-primary text-white px-4 py-2 rounded-xl shadow hover:scale-105 transition"
           >
-            + Add Item
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
+              />
+            </svg>
           </button>
         </div>
 
@@ -172,160 +184,128 @@
           </button>
         </div>
 
-        <!-- Kategori -->
-        <div class="flex gap-2 mb-4 overflow-x-auto items-center">
-          <button
-            class="px-3 py-1 text-sm bg-primary text-white rounded-full nav-item"
-          >
-            All
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 nav-item"
-          >
-            Bahan Mentah
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 nav-item"
-          >
-            Minuman
-          </button>
-          <button
-            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 nav-item"
-          >
-            Bumbu
-          </button>
-          <button
-            class="ml-2 flex items-center justify-center w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 nav-item"
-            title="Tambah Kategori"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4 text-gray-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <!-- Kategori + Pilih Cabang -->
+        <div class="flex justify-between items-center mb-4">
+          <!-- Kategori -->
+          <!-- Filter Kategori -->
+          <div
+            id="category-filters"
+            class="flex gap-2 overflow-x-auto items-center"
+          ></div>
+
+          <!-- Container Dropdown Cabang -->
+          <div class="relative">
+            <!-- Tombol Pilih Cabang -->
+            <button
+              id="branch-btn"
+              class="bg-gray-200 px-3 py-1.5 rounded-full text-sm flex items-center gap-2 hover:bg-gray-300"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </button>
+              Pilih Cabang
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            <!-- Dropdown List -->
+            <div
+              id="branch-list"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50"
+            >
+              <!-- Daftar Cabang -->
+              <div class="p-3 space-y-2" id="branch-container">
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked
+                    class="form-checkbox text-blue-600 branch-checkbox"
+                    data-branch="Gudang Utama"
+                  />
+                  <span class="text-sm">Gudang Utama</span>
+                </label>
+              </div>
+
+              <!-- Tombol Tambah Cabang -->
+              <div class="p-2 border-t">
+                <button
+                  id="add-branch-btn"
+                  class="w-full text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  + Tambah Cabang
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Tambah Cabang -->
+          <div
+            id="branch-modal"
+            class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <div class="bg-white p-4 rounded-lg w-80">
+              <h2 class="text-lg font-semibold mb-3">Tambah Cabang Baru</h2>
+              <form id="branch-form">
+                <input
+                  type="text"
+                  name="branch-name"
+                  placeholder="Nama Cabang"
+                  class="w-full border p-2 rounded mb-3"
+                  required
+                />
+                <div class="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    id="cancel-branch-btn"
+                    class="text-gray-500"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Grid Item -->
-      <div
-        id="item-grid"
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-      >
-        <div class="bg-white rounded-2xl p-3 shadow hover:shadow-md transition">
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Item"
-            class="w-full h-24 object-cover rounded-xl"
-          />
-          <h2 class="text-sm font-medium text-gray-800 mt-2">Tomato</h2>
-          <p class="text-xs text-gray-500">Bahan Mentah</p>
-          <!-- Supplier -->
-          <p class="text-xs text-gray-400 mt-1">
-            Supplier: <span class="text-gray-600">PT Reptil Jaya</span>
-          </p>
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-600">Qty: 120</span>
-            <span
-              class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"
-              >Normal</span
-            >
+      <!-- close sticky bar -->
+      <!-- == START daftar ITEMS ==  -->
+      <div id="item-grid" class="overflow-x-auto">
+        <div class="min-w-[700px] bg-white rounded-xl overflow-hidden shadow">
+          <!-- Header -->
+          <div
+            class="grid grid-cols-7 bg-gray-100 border-b text-xs font-semibold text-gray-700"
+          >
+            <div class="p-3">Kode Item</div>
+            <div class="p-3">Nama Item</div>
+            <div class="p-3">Supplier</div>
+            <div class="p-3">Qty</div>
+            <div class="p-3">Masuk</div>
+            <div class="p-3">Keluar</div>
+            <div class="p-3">Status</div>
           </div>
-        </div>
-        <div class="bg-white rounded-2xl p-3 shadow hover:shadow-md transition">
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Item"
-            class="w-full h-24 object-cover rounded-xl"
-          />
-          <h2 class="text-sm font-medium text-gray-800 mt-2">Saus Sambal</h2>
-          <p class="text-xs text-gray-500">Bumbu</p>
-          <!-- Supplier -->
-          <p class="text-xs text-gray-400 mt-1">
-            Supplier: <span class="text-gray-600">PT Reptil Jaya</span>
-          </p>
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-600">Qty: 10</span>
-            <span
-              class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
-              >Low</span
-            >
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-3 shadow hover:shadow-md transition">
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Item"
-            class="w-full h-24 object-cover rounded-xl"
-          />
-          <h2 class="text-sm font-medium text-gray-800 mt-2">Biawak</h2>
-          <p class="text-xs text-gray-500">Bahan Mentah</p>
-          <!-- Supplier -->
-          <p class="text-xs text-gray-400 mt-1">
-            Supplier: <span class="text-gray-600">PT Reptil Jaya</span>
-          </p>
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-600">Qty: 5</span>
-            <span
-              class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
-              >Low</span
-            >
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-3 shadow hover:shadow-md transition">
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Item"
-            class="w-full h-24 object-cover rounded-xl"
-          />
-          <h2 class="text-sm font-medium text-gray-800 mt-2">Biawak</h2>
-          <p class="text-xs text-gray-500">Bahan Mentah</p>
-          <!-- Supplier -->
-          <p class="text-xs text-gray-400 mt-1">
-            Supplier: <span class="text-gray-600">PT Reptil Jaya</span>
-          </p>
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-600">Qty: 5</span>
-            <span
-              class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
-              >Low</span
-            >
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-3 shadow hover:shadow-md transition">
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Item"
-            class="w-full h-24 object-cover rounded-xl"
-          />
-          <h2 class="text-sm font-medium text-gray-800 mt-2">Biawak</h2>
-          <p class="text-xs text-gray-500">Bahan Mentah</p>
 
-          <!-- Supplier -->
-          <p class="text-xs text-gray-400 mt-1">
-            Supplier: <span class="text-gray-600">PT Reptil Jaya</span>
-          </p>
-
-          <div class="flex justify-between items-center mt-2">
-            <span class="text-xs text-gray-600">Qty: 5</span>
-            <span
-              class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
-              >Low</span
-            >
-          </div>
+          <!-- Body -->
+          <div id="item-rows"></div>
         </div>
       </div>
     </section>
-    <!-- == END ITEMS == -->
+    <!-- == END daftar ITEMS == -->
 
     <!-- == ITEMS FORM START == -->
     <!-- Modal Add Item -->
@@ -334,10 +314,42 @@
       class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
     >
       <div class="bg-white w-[90%] max-w-md p-6 rounded-xl shadow-xl">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">
-          Tambah Item Baru
-        </h2>
-        <form id="item-form" class="space-y-3">
+        <!-- Tombol Switch -->
+        <div class="flex border-b rounded-md overflow-hidden">
+          <button
+            type="button"
+            data-form="add"
+            class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-600 hover:font-bold hover:border-primary hover:text-primary"
+          >
+            Tambah Item
+          </button>
+
+          <button
+            type="button"
+            data-form="in"
+            class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-600 hover:font-bold hover:border-primary hover:text-primary"
+          >
+            Barang Masuk
+          </button>
+
+          <button
+            type="button"
+            data-form="out"
+            class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-600 hover:font-bold hover:border-primary hover:text-primary"
+          >
+            Barang Keluar
+          </button>
+        </div>
+
+        <!-- Form Tambah Item -->
+        <form id="form-add" class="form-section space-y-3">
+          <input
+            type="text"
+            name="code"
+            placeholder="Kode Item"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
           <input
             type="text"
             name="name"
@@ -359,13 +371,13 @@
             class="w-full border p-2 rounded-xl"
             required
           />
-          <input
-            type="number"
-            name="qty"
-            placeholder="Jumlah"
-            class="w-full border p-2 rounded-xl"
-            required
-          />
+
+          <!-- Pilih Cabang -->
+          <select name="branch" class="w-full border p-2 rounded-xl" required>
+            <option value="" disabled selected>Pilih Cabang</option>
+            <option value="Gudang Utama">Gudang Utama</option>
+          </select>
+
           <div class="flex justify-between items-center mt-4">
             <button
               type="submit"
@@ -374,6 +386,106 @@
               Tambah
             </button>
             <button type="button" id="cancel-item-btn" class="text-gray-500">
+              Batal
+            </button>
+          </div>
+        </form>
+
+        <!-- Form Barang Masuk -->
+        <form id="form-in" class="form-section space-y-3 hidden">
+          <input
+            type="text"
+            name="code"
+            placeholder="Kode Item"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+          <input
+            type="text"
+            name="name"
+            placeholder="Nama Item"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+
+          <!-- Pilih Cabang -->
+          <select name="branch" class="w-full border p-2 rounded-xl" required>
+            <option value="" disabled selected>Pilih Cabang</option>
+            <option value="Gudang Utama">Gudang Utama</option>
+          </select>
+
+          <input
+            type="number"
+            name="masuk"
+            placeholder="Jumlah Masuk"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+          <input
+            type="date"
+            name="date_in"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+
+          <div class="flex justify-between items-center mt-4">
+            <button
+              type="submit"
+              class="bg-green-600 text-white px-4 py-2 rounded-xl"
+            >
+              Tambah Masuk
+            </button>
+            <button type="button" id="cancel-in-btn" class="text-gray-500">
+              Batal
+            </button>
+          </div>
+        </form>
+
+        <!-- Form Barang Keluar -->
+        <form id="form-out" class="form-section space-y-3 hidden">
+          <input
+            type="text"
+            name="code"
+            placeholder="Kode Item"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+          <input
+            type="text"
+            name="name"
+            placeholder="Nama Item"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+
+          <!-- Pilih Cabang -->
+          <select name="branch" class="w-full border p-2 rounded-xl" required>
+            <option value="" disabled selected>Pilih Cabang</option>
+            <option value="Gudang Utama">Gudang Utama</option>
+          </select>
+
+          <input
+            type="number"
+            name="keluar"
+            placeholder="Jumlah Keluar"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+          <input
+            type="date"
+            name="date_out"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+
+          <div class="flex justify-between items-center mt-4">
+            <button
+              type="submit"
+              class="bg-red-600 text-white px-4 py-2 rounded-xl"
+            >
+              Tambah Keluar
+            </button>
+            <button type="button" id="cancel-out-btn" class="text-gray-500">
               Batal
             </button>
           </div>
@@ -620,6 +732,7 @@
 
       <!-- BUTTON ADD -->
       <button
+        id="add-item-btn"
         class="bg-primary w-14 h-14 rounded-full -mt-8 flex items-center justify-center shadow-lg border-4 border-white"
       >
         <svg
@@ -693,59 +806,6 @@
     <!-- == END NAVBAR == -->
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
-
-    <!-- == js internal open == -->
-    <script>
-      const addItemBtn = document.getElementById("add-item-btn");
-      const itemModal = document.getElementById("item-modal");
-      const cancelItemBtn = document.getElementById("cancel-item-btn");
-      const itemForm = document.getElementById("item-form");
-
-      const itemGrid = document.querySelector("#items .grid");
-
-      // Tampilkan modal saat tombol ditekan
-      addItemBtn.addEventListener("click", () => {
-        itemModal.classList.remove("hidden");
-      });
-
-      // Sembunyikan modal saat batal
-      cancelItemBtn.addEventListener("click", () => {
-        itemModal.classList.add("hidden");
-      });
-
-      // Submit form dan tambahkan item
-      itemForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const formData = new FormData(itemForm);
-        const name = formData.get("name");
-        const category = formData.get("category");
-        const supplier = formData.get("supplier");
-        const qty = parseInt(formData.get("qty"));
-
-        const status = qty < 10 ? "Low" : "Normal";
-        const statusClass =
-          qty < 10 ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700";
-
-        const itemCard = document.createElement("div");
-        itemCard.className =
-          "bg-white rounded-2xl p-3 shadow hover:shadow-md transition";
-        itemCard.innerHTML = `
-      <img src="https://via.placeholder.com/150" alt="Item" class="w-full h-24 object-cover rounded-xl" />
-      <h2 class="text-sm font-medium text-gray-800 mt-2">${name}</h2>
-      <p class="text-xs text-gray-500">${category}</p>
-      <p class="text-xs text-gray-400 mt-1">Supplier: <span class="text-gray-600">${supplier}</span></p>
-      <div class="flex justify-between items-center mt-2">
-        <span class="text-xs text-gray-600">Qty: ${qty}</span>
-        <span class="text-xs ${statusClass} px-2 py-0.5 rounded-full">${status}</span>
-      </div>
-    `;
-        itemGrid.appendChild(itemCard);
-
-        itemForm.reset();
-        itemModal.classList.add("hidden");
-      });
-    </script>
-    <!-- == js internal close == -->
+    <script src="main.js"></script>
   </body>
 </html>

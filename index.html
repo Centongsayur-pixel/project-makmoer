@@ -40,75 +40,81 @@
   <body class="bg-[#F7F7FB] min-h-screen font-sans">
     <!-- == START HOME == -->
     <section id="home" class="section active-section px-4 pt-4">
-      <p class="text-sm primary flex items-center gap-1">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-          />
-        </svg>
-        Rabu, 13 Apr 2025
+      <p id="current-date" class="text-sm primary flex items-center gap-1">
+        <span id="date-icon"></span>
+        <span></span>
       </p>
+
       <h1 class="text-2xl font-semibold text-gray-800 mt-1">
         Selamat Datang, der!
       </h1>
 
       <!-- Kartu Ringkasan -->
-      <div class="bg-[#1A2A80] rounded-2xl p-4 text-white shadow mt-4">
+      <div
+        id="inventory-summary"
+        class="bg-[#1A2A80] rounded-2xl p-4 text-white shadow mt-4"
+      >
         <h2 class="text-sm opacity-80 mb-2">Ringkasan Inventori</h2>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <p class="text-xs opacity-80">Kategori Barang</p>
-            <p class="text-lg font-semibold">24</p>
+            <p id="summary-categories" class="text-lg font-semibold">0</p>
           </div>
           <div>
             <p class="text-xs opacity-80">Folder</p>
-            <p class="text-lg font-semibold">15</p>
+            <p id="summary-branches" class="text-lg font-semibold">0</p>
           </div>
           <div>
             <p class="text-xs opacity-80">Total Qty</p>
-            <p class="text-lg font-semibold">479 Barang</p>
+            <p id="summary-total-qty" class="text-lg font-semibold">0 Barang</p>
           </div>
           <div>
             <p class="text-xs opacity-80">Total Nilai</p>
-            <p class="text-lg font-semibold">Rp 16.250.000</p>
+            <p id="summary-total-value" class="text-lg font-semibold">Rp 0</p>
           </div>
         </div>
       </div>
 
       <!-- Menu Grid -->
       <div class="grid grid-cols-2 gap-4 mt-6">
+        <!-- Stok Rendah -->
         <div class="bg-white rounded-2xl p-4 shadow hover:shadow-md transition">
           <p class="text-gray-800 font-medium">Stok Rendah</p>
           <p class="text-xs text-gray-400">
             Semua barang dengan stok yang hampir habis
           </p>
-          <p class="text-sm font-semibold mt-2">18 Barang</p>
+          <p class="text-sm font-semibold mt-2" id="low-stock-count">
+            -- Barang
+          </p>
         </div>
+
+        <!-- Pindah Stok -->
         <div class="bg-white rounded-2xl p-4 shadow hover:shadow-md transition">
           <p class="text-gray-800 font-medium">Pindah Stok</p>
           <p class="text-xs text-gray-400">
             Lacak barang yang dipindahkan antar lokasi
           </p>
-          <p class="text-sm font-semibold mt-2">8 Perpindahan</p>
+          <p class="text-sm font-semibold mt-2" id="stock-move-count">
+            -- Perpindahan
+          </p>
         </div>
+
+        <!-- Sering Terjual -->
         <div class="bg-white rounded-2xl p-4 shadow hover:shadow-md transition">
-          <p class="text-gray-800 font-medium">Segera Kedaluwarsa</p>
-          <p class="text-xs text-gray-400">Barang yang akan kedaluwarsa</p>
-          <p class="text-sm font-semibold mt-2">4 Barang</p>
+          <p class="text-gray-800 font-medium">Sering Terjual</p>
+          <p class="text-xs text-gray-400">Barang dengan penjualan terbanyak</p>
+          <p class="text-sm font-semibold mt-2" id="best-seller-count">
+            -- Barang
+          </p>
         </div>
+
+        <!-- Perubahan Qty -->
         <div class="bg-white rounded-2xl p-4 shadow hover:shadow-md transition">
           <p class="text-gray-800 font-medium">Perubahan Qty</p>
           <p class="text-xs text-gray-400">Semua barang masuk dan keluar</p>
-          <p class="text-sm font-semibold mt-2">32 Barang</p>
+          <p class="text-sm font-semibold mt-2" id="qty-change-count">
+            -- Barang
+          </p>
         </div>
       </div>
     </section>
@@ -121,7 +127,9 @@
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-2xl font-semibold text-gray-800">Items</h1>
+          <!-- invoice button -->
           <button
+            id="show-invoice-btn"
             class="bg-primary text-white px-4 py-2 rounded-xl shadow hover:scale-105 transition"
           >
             <svg
@@ -187,64 +195,73 @@
         <!-- Kategori + Pilih Cabang -->
         <div class="flex justify-between items-center mb-4">
           <!-- Kategori -->
-          <!-- Filter Kategori -->
           <div
             id="category-filters"
             class="flex gap-2 overflow-x-auto items-center"
           ></div>
 
-          <!-- Container Dropdown Cabang -->
-          <div class="relative">
-            <!-- Tombol Pilih Cabang -->
-            <button
-              id="branch-btn"
-              class="bg-gray-200 px-3 py-1.5 rounded-full text-sm flex items-center gap-2 hover:bg-gray-300"
-            >
-              Pilih Cabang
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <!-- Container Dropdown Cabang + Riwayat -->
+          <div class="flex items-center gap-2">
+            <!-- Container Dropdown Cabang -->
+            <div class="relative">
+              <!-- Tombol Pilih Cabang -->
+              <button
+                id="branch-btn"
+                class="bg-gray-200 px-3 py-1.5 rounded-full text-sm flex items-center gap-2 hover:bg-gray-300"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            <!-- Dropdown List -->
-            <div
-              id="branch-list"
-              class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50"
-            >
-              <!-- Daftar Cabang -->
-              <div class="p-3 space-y-2" id="branch-container">
-                <label class="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked
-                    class="form-checkbox text-blue-600 branch-checkbox"
-                    data-branch="Gudang Utama"
-                  />
-                  <span class="text-sm">Gudang Utama</span>
-                </label>
-              </div>
-
-              <!-- Tombol Tambah Cabang -->
-              <div class="p-2 border-t">
-                <button
-                  id="add-branch-btn"
-                  class="w-full text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                Pilih Cabang
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  + Tambah Cabang
-                </button>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Dropdown List -->
+              <div
+                id="branch-list"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50"
+              >
+                <!-- Daftar Cabang -->
+                <div class="p-3 space-y-2" id="branch-container">
+                  <label class="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked
+                      class="form-checkbox text-blue-600 branch-checkbox"
+                      data-branch="Gudang Utama"
+                    />
+                    <span class="text-sm">Gudang Utama</span>
+                  </label>
+                </div>
+
+                <!-- Tombol Tambah Cabang -->
+                <div class="p-2 border-t">
+                  <button
+                    id="add-branch-btn"
+                    class="w-full text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    + Tambah Cabang
+                  </button>
+                </div>
               </div>
             </div>
+            <!-- Tombol Riwayat -->
+            <button
+              id="history-btn"
+              class="bg-gray-200 px-3 py-1.5 rounded-full text-sm flex items-center gap-2 hover:bg-gray-300"
+            >
+              Riwayat
+            </button>
           </div>
 
           <!-- Modal Tambah Cabang -->
@@ -283,20 +300,24 @@
         </div>
       </div>
 
-      <!-- close sticky bar -->
-      <!-- == START daftar ITEMS ==  -->
+      <!-- == START daftar ITEMS == -->
       <div id="item-grid" class="overflow-x-auto">
-        <div class="min-w-[700px] bg-white rounded-xl overflow-hidden shadow">
-          <!-- Header -->
+        <div class="min-w-[1000px] bg-white rounded-xl overflow-hidden shadow">
+          <!-- Header (12 kolom) -->
           <div
-            class="grid grid-cols-7 bg-gray-100 border-b text-xs font-semibold text-gray-700"
+            class="grid grid-cols-12 bg-gray-100 border-b text-xs font-semibold text-gray-700"
           >
-            <div class="p-3">Kode Item</div>
-            <div class="p-3">Nama Item</div>
+            <div class="p-3">Kode</div>
+            <div class="p-3">Nama</div>
             <div class="p-3">Supplier</div>
             <div class="p-3">Qty</div>
+            <div class="p-3">Satuan</div>
             <div class="p-3">Masuk</div>
             <div class="p-3">Keluar</div>
+            <div class="p-3">Harga Beli</div>
+            <div class="p-3">Avg Harga</div>
+            <div class="p-3">Harga Jual</div>
+            <div class="p-3">Profit</div>
             <div class="p-3">Status</div>
           </div>
 
@@ -305,6 +326,7 @@
         </div>
       </div>
     </section>
+
     <!-- == END daftar ITEMS == -->
 
     <!-- == ITEMS FORM START == -->
@@ -364,6 +386,14 @@
             class="w-full border p-2 rounded-xl"
             required
           />
+          <input
+            type="text"
+            name="unit"
+            placeholder="Satuan (pcs, liter, box, dll.)"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
+
           <input
             type="text"
             name="supplier"
@@ -427,7 +457,13 @@
             class="w-full border p-2 rounded-xl"
             required
           />
-
+          <input
+            type="text"
+            name="harga_total"
+            placeholder="Harga Beli"
+            class="w-full border p-2 rounded-xl"
+            required
+          />
           <div class="flex justify-between items-center mt-4">
             <button
               type="submit"
@@ -443,6 +479,17 @@
 
         <!-- Form Barang Keluar -->
         <form id="form-out" class="form-section space-y-3 hidden">
+          <!-- Pilih Jenis Keluar -->
+          <select
+            name="jenis_keluar"
+            id="jenis-keluar"
+            class="w-full border p-2 rounded-xl"
+            required
+          >
+            <option value="" disabled selected>Pilih Jenis Keluar</option>
+            <option value="penjualan">Penjualan</option>
+            <option value="transfer">Transfer ke Cabang</option>
+          </select>
           <input
             type="text"
             name="code"
@@ -458,9 +505,19 @@
             required
           />
 
-          <!-- Pilih Cabang -->
+          <!-- Pilih Cabang Asal -->
           <select name="branch" class="w-full border p-2 rounded-xl" required>
-            <option value="" disabled selected>Pilih Cabang</option>
+            <option value="" disabled selected>Pilih Cabang Asal</option>
+            <option value="Gudang Utama">Gudang Utama</option>
+          </select>
+
+          <!-- Pilih Cabang Tujuan (hanya muncul kalau transfer) -->
+          <select
+            name="branch_tujuan"
+            id="branch-tujuan"
+            class="w-full border p-2 rounded-xl hidden"
+          >
+            <option value="" disabled selected>Pilih Cabang Tujuan</option>
             <option value="Gudang Utama">Gudang Utama</option>
           </select>
 
@@ -490,6 +547,133 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal adjust-->
+    <div
+      id="filterModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white w-96 rounded-xl shadow-lg p-6 relative">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold">Filter Lanjutan</h2>
+          <button id="closeFilter" class="text-gray-500 hover:text-gray-700">
+            ✕
+          </button>
+        </div>
+
+        <!-- Form Filter -->
+        <form id="filterForm" class="space-y-3">
+          <!-- Filter kategori -->
+          <div>
+            <label class="block text-sm mb-1">Kategori</label>
+            <input
+              type="text"
+              name="category"
+              placeholder="cth: elektronik"
+              class="w-full border px-3 py-2 rounded-lg"
+            />
+          </div>
+
+          <!-- Filter supplier -->
+          <div>
+            <label class="block text-sm mb-1">Supplier</label>
+            <input
+              type="text"
+              name="supplier"
+              placeholder="cth: PT Makmur"
+              class="w-full border px-3 py-2 rounded-lg"
+            />
+          </div>
+
+          <!-- Filter stok -->
+          <div>
+            <label class="block text-sm mb-1">Stok Minimum</label>
+            <input
+              type="number"
+              name="minStock"
+              class="w-full border px-3 py-2 rounded-lg"
+            />
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <button
+              type="button"
+              id="resetFilter"
+              class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
+            >
+              Reset
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-[#1A2A80] text-white rounded-lg hover:bg-[#142060]"
+            >
+              Terapkan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- history modal -->
+    <div
+      id="history-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white w-3/4 max-w-4xl rounded-xl shadow-lg p-6 relative">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">Riwayat Transaksi</h2>
+          <button
+            id="close-history-btn"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Tabel Riwayat -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border border-gray-200">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-2 border">Tanggal</th>
+                <th class="p-2 border">Kode</th>
+                <th class="p-2 border">Nama</th>
+                <th class="p-2 border">Cabang</th>
+                <th class="p-2 border">Jenis</th>
+                <th class="p-2 border">Jumlah</th>
+              </tr>
+            </thead>
+            <tbody id="history-rows">
+              <!-- Data transaksi akan di-append di sini via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Invoice -->
+    <div
+      id="invoice-in-modal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-xl p-6 w-[600px] relative z-50">
+        <h2 class="text-xl font-bold mb-4">Invoice Barang Masuk</h2>
+        <div id="invoice-in-content" class="text-sm">
+          <p>Belum ada invoice</p>
+        </div>
+        <div class="flex justify-end mt-4 gap-2">
+          <button
+            id="print-invoice-btn"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            Print
+          </button>
+          <button id="close-invoice-btn" class="text-gray-600">Tutup</button>
+        </div>
       </div>
     </div>
 

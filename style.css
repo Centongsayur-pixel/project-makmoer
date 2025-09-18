@@ -1,8 +1,0 @@
-.flex.gap-2 .nav-item:hover {
-  transform: scale(1.05);
-  color: #1a2a80;
-}
-
-.flex.gap-2 .nav-item:hover svg {
-  transform: translateY(-2px);
-}

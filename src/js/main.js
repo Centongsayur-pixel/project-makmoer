@@ -2114,10 +2114,29 @@ async function loadSalesReports() {
 }
 document.addEventListener("DOMContentLoaded", loadSalesReports);
 
+// === EVENT LISTENER UNTUK TOGGLE VIEW ===
+const btnMonth = document.getElementById("btn-month");
+const btnYear = document.getElementById("btn-year");
+
+if (btnMonth)
+  btnMonth.addEventListener("click", () =>
+    updateBranchChartFromRecords("month")
+  );
+if (btnYear)
+  btnYear.addEventListener("click", () => updateBranchChartFromRecords("year"));
+
+// 🔹 default load
+updateBranchChartFromRecords("month");
+
 // === TOP STOCK MOVEMENTS ===
 let stockMovements = {};
 let topStockChart;
 
+let currentRange = "7d";
+let currentCategory = "all";
+let currentItem = "all";
+
+// === INIT CHART ===
 function initTopStockChart() {
   const ctx = document.getElementById("topStockChart")?.getContext("2d");
   if (!ctx) return;
@@ -2141,7 +2160,6 @@ function initTopStockChart() {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            // tampilkan jumlah pcs
             label: (ctx) => ctx.raw.toLocaleString("id-ID") + " pcs",
           },
         },
@@ -2155,22 +2173,106 @@ function initTopStockChart() {
 }
 initTopStockChart();
 
+// === FILTER MENU TOGGLE ===
+const filterBtn = document.getElementById("adjustButton");
+const filterMenu = document.getElementById("adjustMenu");
+
+if (filterBtn && filterMenu) {
+  filterBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    filterMenu.classList.toggle("hidden");
+  });
+  document.addEventListener("click", (e) => {
+    if (!filterMenu.contains(e.target) && !filterBtn.contains(e.target)) {
+      filterMenu.classList.add("hidden");
+    }
+  });
+}
+
+// === POPULATE FILTER DROPDOWN ===
+async function populateCategories() {
+  const { data, error } = await supabase.from("items").select("category");
+  if (error) {
+    console.error("Load categories error:", error.message);
+    return;
+  }
+  const categories = [...new Set(data.map((i) => i.category).filter(Boolean))];
+  const categorySelect = document.getElementById("filter-category");
+  categorySelect.innerHTML = `<option value="all">All Kategori</option>`;
+  categories.forEach((cat) => {
+    categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+async function populateItems(category) {
+  let query = supabase.from("items").select("code,name,category");
+  if (category !== "all") query = query.eq("category", category);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("Load items error:", error.message);
+    return;
+  }
+  const itemSelect = document.getElementById("filter-item");
+  itemSelect.innerHTML = `<option value="all">All Item</option>`;
+  data.forEach((it) => {
+    itemSelect.innerHTML += `<option value="${it.code}">${it.name}</option>`;
+  });
+}
+
 // === AMBIL DATA TOP STOCK dari Supabase ===
-async function loadTopStockMovements() {
+async function loadTopStockMovements(
+  range = currentRange,
+  category = currentCategory,
+  item = currentItem
+) {
   try {
-    const { data, error } = await supabase
+    // 🔹 ambil mapping code -> category dari items
+    const { data: items, error: itemError } = await supabase
+      .from("items")
+      .select("code, category, name");
+    if (itemError) throw itemError;
+
+    const itemMap = {};
+    items.forEach((it) => {
+      itemMap[it.code] = { category: it.category, name: it.name };
+    });
+
+    // 🔹 ambil transaksi
+    let query = supabase
       .from("transactions")
-      .select("code, name, qty")
+      .select("code, name, qty, created_at")
       .eq("type", "transfer");
 
+    // Range waktu
+    const today = new Date();
+    let startDate = new Date();
+    if (range === "3d") startDate.setDate(today.getDate() - 3);
+    if (range === "7d") startDate.setDate(today.getDate() - 7);
+    if (range === "14d") startDate.setDate(today.getDate() - 14);
+    if (range === "1m") startDate.setMonth(today.getMonth() - 1);
+
+    query = query.gte("created_at", startDate.toISOString());
+
+    const { data: transactions, error } = await query;
     if (error) throw error;
 
-    stockMovements = {};
+    // 🔹 filter berdasarkan kategori & item
+    let filtered = transactions.filter((t) => {
+      const itemInfo = itemMap[t.code] || {};
+      if (category !== "all" && itemInfo.category !== category) return false;
+      if (item !== "all" && t.code !== item) return false;
+      return true;
+    });
 
-    data.forEach((t) => {
+    // 🔹 hitung qty per code
+    stockMovements = {};
+    filtered.forEach((t) => {
       if (!stockMovements[t.code]) {
-        // simpan qty + nama sekaligus
-        stockMovements[t.code] = { qty: 0, name: t.name || t.code };
+        stockMovements[t.code] = {
+          qty: 0,
+          name: t.name || itemMap[t.code]?.name || t.code,
+        };
       }
       stockMovements[t.code].qty += t.qty || 0;
     });
@@ -2181,6 +2283,7 @@ async function loadTopStockMovements() {
   }
 }
 
+// === UPDATE CHART ===
 function updateTopStockChart() {
   const list = Object.entries(stockMovements).map(([code, obj]) => ({
     code,
@@ -2194,7 +2297,6 @@ function updateTopStockChart() {
   // ambil 5 teratas
   const top5 = list.slice(0, 5);
 
-  // render chart
   if (topStockChart) {
     topStockChart.data.labels = top5.map((m) => m.name);
     topStockChart.data.datasets[0].data = top5.map((m) => m.qty);
@@ -2202,19 +2304,28 @@ function updateTopStockChart() {
   }
 }
 
-// === TOGGLE VIEW (bulan/tahun) ===
-const btnMonth = document.getElementById("btn-month");
-const btnYear = document.getElementById("btn-year");
+// === EVENT FILTER ===
+document.getElementById("filter-category")?.addEventListener("change", (e) => {
+  currentCategory = e.target.value;
+  populateItems(currentCategory);
+  loadTopStockMovements(currentRange, currentCategory, currentItem);
+});
 
-if (btnMonth) {
-  btnMonth.addEventListener("click", () =>
-    updateBranchChartFromRecords("month")
-  );
-}
-if (btnYear) {
-  btnYear.addEventListener("click", () => updateBranchChartFromRecords("year"));
-}
+document.getElementById("filter-item")?.addEventListener("change", (e) => {
+  currentItem = e.target.value;
+  loadTopStockMovements(currentRange, currentCategory, currentItem);
+});
 
-// 🔹 default load
-updateBranchChartFromRecords("month");
-loadTopStockMovements(); // ✅ langsung load dari Supabase
+document.querySelectorAll("[data-range]")?.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    currentRange = btn.dataset.range;
+    loadTopStockMovements(currentRange, currentCategory, currentItem);
+  });
+});
+
+// === INITIAL LOAD ===
+document.addEventListener("DOMContentLoaded", () => {
+  populateCategories();
+  populateItems("all");
+  loadTopStockMovements();
+});

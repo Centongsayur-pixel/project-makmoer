@@ -173,21 +173,106 @@ async function initApp() {
 
 // auto run pas halaman siap
 document.addEventListener("DOMContentLoaded", initApp);
-// ===== SUMMARY (fix: skip kosong) =====
+
+// ===== SUMMARY (fix full) =====
 function updateInventorySummary() {
-  const summaryEl = document.getElementById("inventory-summary");
-  summaryEl.innerHTML = "";
+  const categoriesEl = document.getElementById("summary-categories");
+  const branchesEl = document.getElementById("summary-branches");
+  const qtyEl = document.getElementById("summary-total-qty");
+  const valueEl = document.getElementById("summary-total-value");
+  const lowStockEl = document.getElementById("low-stock-count");
+  const stockMoveEl = document.getElementById("stock-move-count");
+  const qtyChangeEl = document.getElementById("qty-change-count");
+  const bestSellerEl = document.getElementById("best-seller-count");
+  const branchSummaryEl = document.getElementById("branch-summary");
 
-  for (const [branch, items] of Object.entries(stockData)) {
-    const validItems = Object.entries(items).filter(([_, qty]) => qty > 0);
-    if (validItems.length === 0) continue;
+  // kalau elemen tidak ada, stop biar nggak error
+  if (
+    !categoriesEl ||
+    !branchesEl ||
+    !qtyEl ||
+    !valueEl ||
+    !lowStockEl ||
+    !stockMoveEl ||
+    !qtyChangeEl ||
+    !bestSellerEl
+  ) {
+    console.warn("⚠️ Elemen ringkasan tidak ditemukan di DOM, skip update.");
+    return;
+  }
 
-    const totalItems = validItems.length;
-    const totalQty = validItems.reduce((sum, [_, qty]) => sum + qty, 0);
+  // ambil semua baris item
+  const rows = document.querySelectorAll("#item-rows > div");
 
-    const row = document.createElement("div");
-    row.textContent = `${branch}: ${totalItems} items, ${totalQty} stok total`;
-    summaryEl.appendChild(row);
+  // hitung kategori unik
+  const categories = new Set();
+  rows.forEach((row) => {
+    const cat = row.dataset.category || "";
+    if (cat) categories.add(cat);
+  });
+
+  // hitung total qty & total value
+  let totalQty = 0;
+  let totalValue = 0;
+  let lowStockCount = 0;
+  let totalChange = 0;
+  let bestSeller = { name: null, qty: 0 };
+
+  rows.forEach((row) => {
+    const name = row.children[1]?.textContent || "";
+    const qty = parseInt(row.children[3]?.textContent.replace(/\./g, "")) || 0;
+    const masuk =
+      parseInt(row.children[5]?.textContent.replace(/\./g, "")) || 0;
+    const keluar =
+      parseInt(row.children[6]?.textContent.replace(/\./g, "")) || 0;
+    const avgHarga =
+      parseInt(row.children[8]?.textContent.replace(/\./g, "")) || 0;
+
+    totalQty += qty;
+    totalValue += qty * avgHarga;
+    if (qty > 0 && qty < 10) lowStockCount++;
+    totalChange += masuk + keluar;
+
+    if (keluar > bestSeller.qty) {
+      bestSeller = { name, qty: keluar };
+    }
+  });
+
+  // ✅ Folder = jumlah item
+  const itemCount = rows.length;
+
+  // sementara transferCount = 0 (nanti bisa diisi dari log transaksi Supabase)
+  const transferCount = 0;
+
+  // update ke UI
+  categoriesEl.textContent = categories.size;
+  branchesEl.textContent = itemCount;
+  qtyEl.textContent = `${totalQty.toLocaleString("id-ID")} Barang`;
+  valueEl.textContent = `Rp ${totalValue.toLocaleString("id-ID")}`;
+  lowStockEl.textContent = `${lowStockCount} Barang`;
+  stockMoveEl.textContent = `${transferCount} Perpindahan`;
+  qtyChangeEl.textContent = `${totalChange} Barang`;
+
+  if (bestSeller.qty > 0) {
+    bestSellerEl.textContent = `${bestSeller.name} (${bestSeller.qty})`;
+  } else {
+    bestSellerEl.textContent = "Belum ada";
+  }
+
+  // ringkasan per branch
+  if (branchSummaryEl) {
+    branchSummaryEl.innerHTML = "";
+    for (const [branch, items] of Object.entries(stockData)) {
+      const validItems = Object.entries(items).filter(([_, qty]) => qty > 0);
+      if (validItems.length === 0) continue;
+
+      const totalItems = validItems.length;
+      const totalQtyBranch = validItems.reduce((sum, [_, qty]) => sum + qty, 0);
+
+      const row = document.createElement("div");
+      row.textContent = `${branch}: ${totalItems} items, ${totalQtyBranch} stok total`;
+      branchSummaryEl.appendChild(row);
+    }
   }
 }
 
@@ -288,76 +373,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // update tiap jam supaya kalau hari/jam berubah langsung ikut
   setInterval(updateDate, 60 * 60 * 1000);
 });
-// ===== INVENTORY SUMMARY =====
-function updateInventorySummary() {
-  const categoriesEl = document.getElementById("summary-categories");
-  const branchesEl = document.getElementById("summary-branches");
-  const qtyEl = document.getElementById("summary-total-qty");
-  const valueEl = document.getElementById("summary-total-value");
-  const lowStockEl = document.getElementById("low-stock-count");
-  const stockMoveEl = document.getElementById("stock-move-count");
-  const qtyChangeEl = document.getElementById("qty-change-count");
-  const bestSellerEl = document.getElementById("best-seller-count");
-
-  // ambil semua baris item
-  const rows = document.querySelectorAll("#item-rows > div");
-
-  // hitung kategori unik
-  const categories = new Set();
-  rows.forEach((row) => {
-    const cat = row.dataset.category || "";
-    if (cat) categories.add(cat);
-  });
-
-  // hitung total qty & total value
-  let totalQty = 0;
-  let totalValue = 0;
-  let lowStockCount = 0;
-  let totalChange = 0;
-
-  // best seller tracker
-  let bestSeller = { name: null, qty: 0 };
-
-  rows.forEach((row) => {
-    const name = row.children[1]?.textContent || "";
-    const qty = parseInt(row.children[3]?.textContent.replace(/\./g, "")) || 0;
-    const masuk =
-      parseInt(row.children[5]?.textContent.replace(/\./g, "")) || 0;
-    const keluar =
-      parseInt(row.children[6]?.textContent.replace(/\./g, "")) || 0;
-    const avgHarga =
-      parseInt(row.children[8]?.textContent.replace(/\./g, "")) || 0;
-
-    totalQty += qty;
-    totalValue += qty * avgHarga;
-    if (qty > 0 && qty < 10) lowStockCount++;
-    totalChange += masuk + keluar;
-
-    // cek best seller berdasarkan keluar
-    if (keluar > bestSeller.qty) {
-      bestSeller = { name, qty: keluar };
-    }
-  });
-
-  // hitung jumlah cabang (checkbox cabang)
-  const branchCount = document.querySelectorAll(".branch-checkbox").length;
-
-  // update ke UI
-  categoriesEl.textContent = categories.size;
-  branchesEl.textContent = rows.length; // ✅ Folder = jumlah item
-  qtyEl.textContent = `${totalQty.toLocaleString("id-ID")} Barang`;
-  valueEl.textContent = `Rp ${totalValue.toLocaleString("id-ID")}`;
-  lowStockEl.textContent = `${lowStockCount} Barang`;
-  stockMoveEl.textContent = `${transferCount} Perpindahan`;
-  qtyChangeEl.textContent = `${totalChange} Barang`;
-
-  // update best seller
-  if (bestSeller.qty > 0) {
-    bestSellerEl.textContent = `${bestSeller.name} (${bestSeller.qty})`;
-  } else {
-    bestSellerEl.textContent = "Belum ada";
-  }
-}
 
 // === ITEM SECTION ===
 
@@ -628,36 +643,6 @@ async function addInitialStock(branch, code, qty) {
   }
 }
 
-// ===== HAPUS ITEM =====
-async function handleDeleteItem(branch, code) {
-  const ok = await deleteItem(branch, code);
-  if (!ok) return;
-
-  if (stockData[branch] && stockData[branch][code] !== undefined) {
-    delete stockData[branch][code];
-  }
-  if (stockMeta[branch] && stockMeta[branch][code]) {
-    delete stockMeta[branch][code];
-  }
-
-  const row = itemGrid.querySelector(`[data-code="${code}"]`);
-  if (row) row.remove();
-
-  updateInventorySummary();
-}
-
-// ===== BRANCH / CATEGORY / UI UTILITY (tetap sama, sedikit disesuaikan) =====
-function updateBranchSelectOptions(branchName) {
-  document.querySelectorAll('select[name="branch"]').forEach((select) => {
-    if (!Array.from(select.options).some((opt) => opt.value === branchName)) {
-      const option = document.createElement("option");
-      option.value = branchName;
-      option.textContent = branchName;
-      select.appendChild(option);
-    }
-  });
-}
-
 // ===== REFRESH QTY, AVG, HARGA JUAL & PROFIT =====
 const PROFIT_TARGET = 0.1; // 10%
 
@@ -832,6 +817,14 @@ function updateBranchSelectOptions(branchName) {
         select.appendChild(option);
       }
     });
+  });
+  document.querySelectorAll('select[name="branch"]').forEach((select) => {
+    if (!Array.from(select.options).some((opt) => opt.value === branchName)) {
+      const option = document.createElement("option");
+      option.value = branchName;
+      option.textContent = branchName;
+      select.appendChild(option);
+    }
   });
 }
 
@@ -2132,7 +2125,7 @@ updateBranchChartFromRecords("month");
 let stockMovements = {};
 let topStockChart;
 
-let currentRange = "7d";
+let currentRange = "1m";
 let currentCategory = "all";
 let currentItem = "all";
 

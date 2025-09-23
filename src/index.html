@@ -61,7 +61,7 @@
             <p id="summary-categories" class="text-lg font-semibold">0</p>
           </div>
           <div>
-            <p class="text-xs opacity-80">Folder</p>
+            <p class="text-xs opacity-80">Produk</p>
             <p id="summary-branches" class="text-lg font-semibold">0</p>
           </div>
           <div>
@@ -889,22 +889,28 @@
           </div>
         </div>
       </div>
-     <!-- 🔹 4. Stock Composition / Distribusi Transfer -->
-<div class="bg-white rounded-2xl shadow p-4 relative overflow-hidden">
-  <h2 class="text-sm font-semibold text-gray-700 mb-3">
-    Stock Composition
-  </h2>
 
-  <!-- Canvas chart -->
-  <div class="relative">
-    <canvas id="stockCompositionChart" class="w-full h-72 blur-sm pointer-events-none"></canvas>
+      <!-- 🔹 4. Stock Composition / Distribusi Transfer -->
+      <div class="bg-white rounded-2xl shadow p-4 relative overflow-hidden">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">
+          Stock Composition
+        </h2>
 
-    <!-- Overlay teks -->
-    <div class="absolute inset-0 flex items-center justify-center bg-white/60">
-      <span class="text-gray-700 font-medium">lagi di update cuy 🚧</span>
-    </div>
-  </div>
-</div>
+        <!-- Chart diblur -->
+        <canvas
+          id="stockCompositionChart"
+          class="w-full h-72 blur-sm pointer-events-none"
+        ></canvas>
+
+        <!-- Overlay -->
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-white/60"
+        >
+          <span class="text-gray-700 font-medium">lagi di update cuy 🚧</span>
+        </div>
+      </div>
+    </section>
+
     <!-- == END STATS == -->
 
     <!-- == START PROFILE == -->
@@ -1145,7 +1151,3 @@
     <script src="./js/main.js"></script>
   </body>
 </html>
-
-
-
-
